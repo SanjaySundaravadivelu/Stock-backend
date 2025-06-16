@@ -12,7 +12,7 @@ import cors from "cors";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 9000;
+const PORT = process.env.PORT || 8000;
 const FEURL = process.env.FEURL;
 
 const __dirname = path.resolve();
@@ -38,7 +38,12 @@ app.use(express.json()); // allows us to accept JSON data in the req.body
 
 app.use("/api/products", productRoutes);
 
-app.listen(PORT, () => {
-  connectDB();
-  console.log("Server started at " + PORT);
-});
+connectDB()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log("Server started at " + PORT);
+    });
+  })
+  .catch((err) => {
+    console.error("Failed to connect to DB", err);
+  });
