@@ -85,6 +85,7 @@ export const login = async (req, res) => {
 
     const payload = ticket.getPayload();
     const { email, sub: googleId, name, picture } = payload;
+    console.log(payload,email);
 
     // Try to find user by email
     let user = await User.findOne({ email });
