@@ -117,9 +117,9 @@ export const login = async (req, res) => {
     res
       .cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // send over HTTPS only in prod
-        sameSite: "Lax", // or "Strict" depending on your case
-        maxAge: 24 * 60 * 60 * 1000, // 1 day
+  	secure: true, // MUST be true on Vercel
+  	sameSite: "None", // Required for cross-site cookies
+  	maxAge: 24 * 60 * 60 * 1000, // 1 day
       })
       .status(200)
       .json({ token });
