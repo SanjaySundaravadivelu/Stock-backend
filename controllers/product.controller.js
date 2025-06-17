@@ -85,7 +85,6 @@ export const login = async (req, res) => {
 
     const payload = ticket.getPayload();
     const { email, sub: googleId, name, picture } = payload;
-    console.log(payload,key,googletoken);
 
     // Try to find user by email
     let user = await User.findOne({ email });
@@ -117,9 +116,9 @@ export const login = async (req, res) => {
     res
       .cookie("token", token, {
         httpOnly: true,
-  	secure: true, // MUST be true on Vercel
-  	sameSite: "None", // Required for cross-site cookies
-  	maxAge: 24 * 60 * 60 * 1000, // 1 day
+        secure: process.env.NODE_ENV === "production", // send over HTTPS only in prod
+        sameSite: "Lax", // or "Strict" depending on your case
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
       })
       .status(200)
       .json({ token });
@@ -178,7 +177,10 @@ export const getReccomended = async (req, res) => {
   }
 };
 export const getProducts = async (req, res) => {
-  const user = await authenticateUser(req.cookies.token);
+  const token = req.headers.authorization?.split(" ")[1];
+  // Then verify token and continue
+
+  const user = await authenticateUser(token);
 
   try {
     const products = await Product.find({ userid: user.userid });
@@ -213,6 +215,7 @@ export const getMutalfunds = async (req, res) => {
   }
 };
 export const getIpo = async (req, res) => {
+  console.log("called");
   const { id } = req.params;
   try {
     request(
@@ -264,7 +267,10 @@ export const getHistoricalData = async (req, res) => {
   }
 };
 export const createProduct = async (req, res) => {
-  const user = await authenticateUser(req.cookies.token);
+  const token = req.headers.authorization?.split(" ")[1];
+  // Then verify token and continue
+
+  const user = await authenticateUser(token);
   if (!user && !user.userid) {
     return res.status(500).json({ success: false, message: "Server Error" });
   }
@@ -281,7 +287,10 @@ export const createProduct = async (req, res) => {
 };
 export const getStat = async (req, res) => {
   try {
-    const user = await authenticateUser(req.cookies.token);
+    const token = req.headers.authorization?.split(" ")[1];
+    // Then verify token and continue
+
+    const user = await authenticateUser(token);
     if (!user && !user.userid) {
       return res.status(500).json({ success: false, message: "Server Error" });
     }
@@ -1135,7 +1144,10 @@ const mailing = async (user) => {
   });
 };
 export const updateStat = async (req, res) => {
-  const user = await authenticateUser(req.cookies.token);
+  const token = req.headers.authorization?.split(" ")[1];
+  // Then verify token and continue
+
+  const user = await authenticateUser(token);
   if (!user && !user.userid) {
     return res.status(500).json({ success: false, message: "Server Error" });
   }
@@ -1211,7 +1223,10 @@ export const updateStat = async (req, res) => {
   }
 };
 export const updateProduct = async (req, res) => {
-  const user = await authenticateUser(req.cookies.token);
+  const token = req.headers.authorization?.split(" ")[1];
+  // Then verify token and continue
+
+  const user = await authenticateUser(token);
   if (!user && !user.userid) {
     return res.status(500).json({ success: false, message: "Server Error" });
   }
