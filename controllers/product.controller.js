@@ -97,7 +97,7 @@ export const login = async (req, res) => {
         username: name,
       });
 
-      const stat = await stat.create({
+      const stats = await stat.create({
         stat: {
           strongbuy: 0,
           buy: 0,
@@ -179,8 +179,10 @@ export const getReccomended = async (req, res) => {
 export const getProducts = async (req, res) => {
   const token = req.headers.authorization?.split(" ")[1];
   // Then verify token and continue
+  console.log(token);
 
   const user = await authenticateUser(token);
+  console.log(user);
 
   try {
     const products = await Product.find({ userid: user.userid });
